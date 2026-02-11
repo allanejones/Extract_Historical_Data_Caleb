@@ -22,7 +22,7 @@ Move the `vips-dev-8.16` directory to a convenient, permanent place on your C dr
 Download and install Miniconda from <https://www.anaconda.com/download/success> (if you haven't already), then, in the Anaconda Power Shell:
 
 ```powershell
-conda create -n Miniconda-Phi3_5-Viz pytorch einops torchvision torchaudio cudatoolkit transformers=4.49.0 einops accelerate pillow ninja pytorch-cuda=12.1 python=3.11 -c pytorch -c nvidia -c conda-forge
+conda create -n Miniconda-Phi3_5-Viz pytorch einops torchvision torchaudio cudatoolkit transformers=4.49.0 accelerate pillow ninja pytorch-cuda=12.1 python=3.11 -c pytorch -c nvidia -c conda-forge
 ```
 
 After the CUDA env creation:
