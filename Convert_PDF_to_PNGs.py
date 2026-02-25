@@ -32,39 +32,48 @@
 
 from pdf2image import convert_from_path
 from PIL import Image
-from os import path, replace
+from os import path, replace, listdir
 
-# ** Path to the PDF you want to convert to a series of images **
-pdf_path = r"C:\Your\PDF\to\convert\here.pdf"
+basepath  = r'C:\Users\alljones\University of Illinois - Urbana\EStL SIC (ISWS) - General\Data\Dark Data'
+dest_fldr = path.join(basepath, 'dark pngs')
+pdf_fldrs = ['General Chemical', 'Gieszelmann', 'Hantleman', 'Hook, Elizabeth', 'Olin Mathieson - AN']
 
-# ** Directory to save converted images to **
-dest_dir = r'C:\Your\destination\directory\here'
+for fldr in pdf_fldrs:
+    cur_path = path.join(basepath, fldr)
+    for i, filename in enumerate(listdir(cur_path)):
+        if '.pdf' not in filename:
+            continue
+        # ** Path to the PDF you want to convert to a series of images **
+        pdf_path = path.join(cur_path, filename) # r"C:\Your\PDF\to\convert\here.pdf"
 
-# ** Base filename to use for converted images **
-filename_prefix = "Your output filename here-p."
-# ** Start numbering the filenames here (e.g., the first page number) **
-filename_numbering_start=15
-# ** Number of digits for zero-padding the filename number (e.g., 42 => '042') **
-filename_number_padding=3
-# ** Output image format **
-image_format = 'png'
+        # ** Directory to save converted images to **
+        dest_dir = dest_fldr # 'C:\Your\destination\directory\here'
 
-print(f"Converting {pdf_path} to images...")
-# ** Change DPI as needed to maintain clarity/legibility of text or other
-# details; poppler_path can be excluded if you installed poppler from
-# conda-forge OR have poppler in your PATH variables **
-images_out = convert_from_path(pdf_path,
-                               dpi=300,
-                               output_folder=dest_dir,
-                               fmt=image_format)#,
-                               #poppler_path = r'C:\path\to\poppler-xx\bin')
+        # ** Base filename to use for converted images **
+        filename_prefix = f"{fldr}_" # "Your output filename here-p."
+        # ** Start numbering the filenames here (e.g., the first page number) **
+        filename_numbering_start=i #15
+        # ** Number of digits for zero-padding the filename number (e.g., 42 => '042') **
+        filename_number_padding=3
+        # ** Output image format **
+        image_format = 'png'
 
-print("Conversion complete. Renaming image files...")
-# Rename images
-for i, curr_img in enumerate(images_out, start = filename_numbering_start):
-    # Close current image I/O stream
-    curr_img.close()
-    # Generate the new filename
-    new_name = f"{filename_prefix}{str(i).zfill(filename_number_padding)}.{image_format}"
-    # ...And rename the file
-    replace(curr_img.filename, path.join(dest_dir, new_name))
+        print(f"Converting {pdf_path} to images...")
+        # ** Change DPI as needed to maintain clarity/legibility of text or other
+        # details; poppler_path can be excluded if you installed poppler from
+        # conda-forge OR have poppler in your PATH variables **
+        images_out = convert_from_path(pdf_path,
+                                       dpi=300,
+                                       output_folder=dest_dir,
+                                       fmt=image_format)#,
+                                       #poppler_path = r'C:\path\to\poppler-xx\bin')
+
+        print("Conversion complete. Renaming image files...")
+        # Rename images
+        for i, curr_img in enumerate(images_out, start = filename_numbering_start):
+            # Close current image I/O stream
+            curr_img.close()
+            # Generate the new filename
+            new_name = f"{filename_prefix}{str(i).zfill(filename_number_padding)}.{image_format}"
+            # ...And rename the file
+            replace(curr_img.filename, path.join(dest_dir, new_name))

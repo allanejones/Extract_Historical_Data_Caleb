@@ -30,7 +30,7 @@
 ## Set up model
 from PIL import Image
 from glob import glob
-from os import path
+from os import path, listdir
 import requests
 from transformers import AutoModelForCausalLM
 from transformers import AutoProcessor
@@ -43,7 +43,7 @@ model = AutoModelForCausalLM.from_pretrained(
   device_map="cuda",
   trust_remote_code=True,
   torch_dtype="auto",
-  _attn_implementation='flash_attention_2'
+  _attn_implementation="eager", #'flash_attention_2'
 )
 
 # for best performance, use num_crops=4 for multi-frame, num_crops=16 for single-frame.
@@ -103,10 +103,9 @@ def Promptify_Proto_Image_Paths(path_list):
     return messages
 
 # ** Prototype images to guide response **
-proto_img_paths = [
-    r"C:\Your\prototype\image\here\001.png",
-    r"C:\Your\prototype\image\here\002.png"
-    ]
+darkpath = r'C:\Users\alljones\University of Illinois - Urbana\EStL SIC (ISWS) - General\Data\Dark Data\dark pngs'
+proto_img_dir = path.join(darkpath, 'Prototype Images')
+proto_img_paths = [path.join(proto_img_dir, png) for png in listdir(proto_img_dir)]
 
 # Create inference prompt from prototype images & their associated prototype extractions
 messages = Promptify_Proto_Image_Paths(proto_img_paths)
@@ -118,15 +117,17 @@ image_list.append(None)
 
 # ** Directory + search wildcard location of the images to extract data from **
 # IMPORTANT: Keep the wildcard "*" character for glob search!
-extract_img_pattern = r"C:\Your\historical\document\image\location\here\*.png"
+extract_img_pattern = path.join(darkpath, '*.png') #r"C:\Your\historical\document\image\location\here\*.png"
 
 # ** Directory + search wildcard location of the final, verified outputs **
 # IMPORTANT: Keep the wildcard "*" character for glob search!
-extract_complete_pattern = r"C:\Your\final\verified\output\files\here\*." + f'{file_ext}'
+# (r"C:\Your\final\verified\output\files\here\*." + f'{file_ext}')
+extract_complete_pattern = (darkpath + r"\verified\*." + f'{file_ext}')
 
 # ** Output directory for response exports **
 # IMPORTANT: Keep the string formatting placeholder "{}" for the filename!
-dest_dir = r"C:\Your\export\location\here\{}." + f'{file_ext}'
+# r"C:\Your\export\location\here\{}." + f'{file_ext}'
+dest_dir = (darkpath + r"\response\*." + f'{file_ext}')
 
 # Paths of complete and verified response outputs
 complete_paths = glob(extract_complete_pattern)

@@ -1,0 +1,23 @@
+{
+  "metadata":{
+    "Year": null,
+    "Owner": "",
+    "County": "",
+    "Depth": "",
+    "Address": "",
+    "Location": "",
+    "Well Identity": "",
+    "Section": "",
+    "Township": "",
+    "Range": "",
+    "Elevation TOW": null,
+    "Describe Point": "",
+    "Airline Length": "",
+    "Elevation Bottom Airline": null,
+    "Datum": ""
+  },
+  "daily_data":{
+    "date":[],
+    "water level":[]
+  }
+}
