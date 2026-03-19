@@ -37,8 +37,9 @@ from os import path, replace, listdir
 from datetime import datetime as dt
 import re
 
-basepath  = r'F:\EastStLouis\Digitizing_Dark_Data\raw_scans_PDF\Template A'
-dest_fldr = r'F:\EastStLouis\Digitizing_Dark_Data\Test Extractions\raw_scans_PNGs'
+template_type = 'Template B'
+basepath  = r'F:\EastStLouis\Digitizing_Dark_Data\{}\_raw_scans_PDFs'.format(template_type)
+dest_fldr = r'F:\EastStLouis\Digitizing_Dark_Data\{}\_raw_scans_PNGs'.format(template_type)
 
 for i, filename in enumerate(listdir(basepath)):
     if '.pdf' not in filename:
