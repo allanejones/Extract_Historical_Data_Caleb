@@ -54,15 +54,16 @@ from glob import glob
 
 # ** Directory + search wildcard location of the images to crop **
 # IMPORTANT: Keep the wildcard "*" character for glob search!
-src_dir = r'C:\Users\alljones\Desktop\dump\test2\*.png' #r'C:\Your\images\to\crop\here\*.png'
+template_type = 'Test Extractions'
+src_dir = r'F:\EastStLouis\Digitizing_Dark_Data\{}\_raw_scans_PNGs\*.png'.format(template_type)
 
 # ** Directory to save cropped images to **
-dest_dir = r'C:\Users\alljones\Desktop\dump\test2\cropped' # r'C:\Your\destination\directory\here'
+dest_dir = r'F:\EastStLouis\Digitizing_Dark_Data\{}'.format(template_type) # r'C:\Your\destination\directory\here'
 
 # ** List with path(s) for cropping bounding box PNG(s) **
 cropping_bbox_paths = [
-    r'C:\Users\alljones\Desktop\dump\test2\boundingbox\metadata_t0.png',
-    r'C:\Users\alljones\Desktop\dump\test2\boundingbox\tabular_data_t0.png'
+    r'F:\EastStLouis\Digitizing_Dark_Data\{}\_boundingbox\metadata_t1.png'.format(template_type),
+    r'F:\EastStLouis\Digitizing_Dark_Data\{}\_boundingbox\tabular_data_t1.png'.format(template_type)
 ]
 
 # ** Numbering prefix to use in filenames if each image has multiple cropping bounding boxes (e.g., a page layout with 2 or more entries per page) **
@@ -85,7 +86,15 @@ for count, src_path in enumerate(src_paths, start=1):
         base_filename = path.basename(path.splitext(src_path)[0])
         # Construct the output filename...
         if len(cropping_bboxes) > 1:
-            dest_filename = f"{base_filename}{multi_crop_prefix}{i}{cropped_suffix}.png"
+            if i == 1:
+                fldr = 'Header_PNGS'
+                multi_crop_prefix = '-metadata'
+            elif i == 2:
+                fldr = 'Tabular_PNGs'
+                multi_crop_prefix = '-table'
+            else:
+                raise Exception(f'Houston, we have a problem. Unexpected "i" = {i}')
+            dest_filename = f"{fldr}/{base_filename}{multi_crop_prefix}{i}{cropped_suffix}.png"
         else:
             dest_filename = f"{base_filename}{cropped_suffix}.png"
         # Now put it all together...

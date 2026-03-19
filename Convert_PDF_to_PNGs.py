@@ -50,7 +50,7 @@ for i, filename in enumerate(listdir(basepath)):
     dest_dir = dest_fldr # 'C:\Your\destination\directory\here'
 
     # ** Base filename to use for converted images **
-    tag = filename.split('_')[0]
+    tag = filename.split('.')[0]
     if re.search('[a-zA-Z]*', tag).group() == '':
         tag = 'scan'
     filename_prefix = f"{dt.now().strftime('%Y%m%d')}_{tag}_" # "Your output filename here-p."
@@ -80,3 +80,5 @@ for i, filename in enumerate(listdir(basepath)):
         new_name = f"{filename_prefix}{str(i).zfill(filename_number_padding)}.{image_format}"
         # ...And rename the file
         replace(curr_img.filename, path.join(dest_dir, new_name))
+
+print('\n***Converted all PDFs in file to PNG. Complete.***')
