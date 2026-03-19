@@ -35,8 +35,8 @@ from PIL import Image
 from os import path, replace, listdir
 
 basepath  = r'C:\Users\alljones\University of Illinois - Urbana\EStL SIC (ISWS) - General\Data\Dark Data'
-dest_fldr = r'F:\EastStLouis\Digitizing_Dark_Data\low-res'
-pdf_fldrs = ['General Chemical', 'Gieszelmann', 'Hantleman', 'Hook, Elizabeth', 'Olin Mathieson - AN']
+dest_fldr = r'C:\Users\alljones\Desktop\dump\test2'
+pdf_fldrs = ['General Chemical']#, 'Gieszelmann', 'Hantleman', 'Hook, Elizabeth', 'Olin Mathieson - AN']
 
 for fldr in pdf_fldrs:
     cur_path = path.join(basepath, fldr)
@@ -63,7 +63,7 @@ for fldr in pdf_fldrs:
         # details; poppler_path can be excluded if you installed poppler from
         # conda-forge OR have poppler in your PATH variables **
         images_out = convert_from_path(pdf_path,
-                                       dpi=75,
+                                       dpi=300,
                                        output_folder=dest_dir,
                                        fmt=image_format)#,
                                        #poppler_path = r'C:\path\to\poppler-xx\bin')

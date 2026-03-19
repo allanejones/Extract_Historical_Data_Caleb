@@ -40,7 +40,7 @@ model_id = "rfpaul/Phi-3.5-vision-instruct"
 # Note: set _attn_implementation='eager' if you don't have flash_attn installed
 model = AutoModelForCausalLM.from_pretrained(
   model_id,
-  device_map="cuda",
+  device_map= "cuda", #"cpu", #"cuda",
   trust_remote_code=True,
   torch_dtype="auto",
   _attn_implementation="eager", #'flash_attention_2'
@@ -55,7 +55,7 @@ processor = AutoProcessor.from_pretrained(model_id,
 
 ## Set up input and output directories, prompts, etc.
 # ** Change this to the file type extension of the output responses **
-file_ext = 'json'
+file_ext = 'json' # csv
 
 # Helper function to get the basename with no extension from a filepath
 def Basename_Only(filepath):
@@ -76,7 +76,7 @@ def Promptify_Proto_Image_Paths(path_list):
         # Drop the file extension and split apart the path
         full_path_split = path.splitext(p)[0].split(path.sep)
         # ** Change the parent directory to your prototype response directory **
-        full_path_split[-2] = "Prototype Responses"
+        full_path_split[-2] = "Prototype_Responses"
         # Recombine to get the path to the prototype responses
         proto_response_path = path.sep.join(full_path_split) + f'.{file_ext}'
         # Get the proto response contents as a string
@@ -86,7 +86,11 @@ def Promptify_Proto_Image_Paths(path_list):
         if i == 1:
             messages.extend(
                 [ # ** Initial prompt to prime the model **
-                    {"role": "user", "content": "<|image_1|>\nI'm digitizing historical reports of problem sites around mined-out areas and abandoned mines in Illinois. Township, Range, and Section are PLSS bearings. I need you to extract all the textual and numeric data into JSON format. Represent numerical values as standard US decimal numbers with no thousands separators. The fields 'Owner', 'Mined_by' and 'Photo_Reference' occassionally wrap to a second line. Represent blank, empty, or NA values as {}."},
+                    {"role": "user", "content": """<|image_1|>
+                    I'm digitizing historical reports groundwater levels from wells throughout Illinois. Township, 
+                    Range, and Section are PLSS bearings. I need you to extract all the textual and numeric data 
+                    into JSON format. Represent numerical values as standard US decimal numbers with no thousands 
+                    separators. Represent blank, empty, or NA values as {}."""},
                     {"role": "assistant", "content": proto_response}
                 ])
         else:
@@ -103,8 +107,8 @@ def Promptify_Proto_Image_Paths(path_list):
     return messages
 
 # ** Prototype images to guide response **
-darkpath = r'C:\Users\alljones\University of Illinois - Urbana\EStL SIC (ISWS) - General\Data\Dark Data\dark pngs'
-proto_img_dir = path.join(darkpath, 'Prototype Images')
+basepath = r"C:\Users\alljones\Desktop\dump\test2\Test Extractions"
+proto_img_dir = path.join(basepath, r'Proto_Headers\Prototype_Images')
 proto_img_paths = [path.join(proto_img_dir, png) for png in listdir(proto_img_dir)]
 
 # Create inference prompt from prototype images & their associated prototype extractions
@@ -117,17 +121,18 @@ image_list.append(None)
 
 # ** Directory + search wildcard location of the images to extract data from **
 # IMPORTANT: Keep the wildcard "*" character for glob search!
-extract_img_pattern = path.join(darkpath, '*.png') #r"C:\Your\historical\document\image\location\here\*.png"
+extract_img_pattern = path.join(basepath, r'Header_PNGs\*.png')
+#r"C:\Your\historical\document\image\location\here\*.png"
 
 # ** Directory + search wildcard location of the final, verified outputs **
 # IMPORTANT: Keep the wildcard "*" character for glob search!
 # (r"C:\Your\final\verified\output\files\here\*." + f'{file_ext}')
-extract_complete_pattern = (darkpath + r"\verified\*." + f'{file_ext}')
+extract_complete_pattern = (basepath + r"\Header_JSONs\*." + f'{file_ext}')
 
 # ** Output directory for response exports **
 # IMPORTANT: Keep the string formatting placeholder "{}" for the filename!
 # r"C:\Your\export\location\here\{}." + f'{file_ext}'
-dest_dir = (darkpath + r"\response\*." + f'{file_ext}')
+dest_dir = (basepath + r"\Header_JSONs\{}." + f'{file_ext}')
 
 # Paths of complete and verified response outputs
 complete_paths = glob(extract_complete_pattern)
