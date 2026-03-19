@@ -33,47 +33,50 @@
 from pdf2image import convert_from_path
 from PIL import Image
 from os import path, replace, listdir
+# AEJ IMPORTS
+from datetime import datetime as dt
+import re
 
-basepath  = r'C:\Users\alljones\University of Illinois - Urbana\EStL SIC (ISWS) - General\Data\Dark Data'
-dest_fldr = r'C:\Users\alljones\Desktop\dump\test2'
-pdf_fldrs = ['General Chemical']#, 'Gieszelmann', 'Hantleman', 'Hook, Elizabeth', 'Olin Mathieson - AN']
+basepath  = r'F:\EastStLouis\Digitizing_Dark_Data\raw_scans_PDF\Template A'
+dest_fldr = r'F:\EastStLouis\Digitizing_Dark_Data\Test Extractions\raw_scans_PNGs'
 
-for fldr in pdf_fldrs:
-    cur_path = path.join(basepath, fldr)
-    for i, filename in enumerate(listdir(cur_path)):
-        if '.pdf' not in filename:
-            continue
-        # ** Path to the PDF you want to convert to a series of images **
-        pdf_path = path.join(cur_path, filename) # r"C:\Your\PDF\to\convert\here.pdf"
+for i, filename in enumerate(listdir(basepath)):
+    if '.pdf' not in filename:
+        continue
+    # ** Path to the PDF you want to convert to a series of images **
+    pdf_path = path.join(basepath, filename) # r"C:\Your\PDF\to\convert\here.pdf"
 
-        # ** Directory to save converted images to **
-        dest_dir = dest_fldr # 'C:\Your\destination\directory\here'
+    # ** Directory to save converted images to **
+    dest_dir = dest_fldr # 'C:\Your\destination\directory\here'
 
-        # ** Base filename to use for converted images **
-        filename_prefix = f"{fldr}_" # "Your output filename here-p."
-        # ** Start numbering the filenames here (e.g., the first page number) **
-        filename_numbering_start=i #15
-        # ** Number of digits for zero-padding the filename number (e.g., 42 => '042') **
-        filename_number_padding=3
-        # ** Output image format **
-        image_format = 'png'
+    # ** Base filename to use for converted images **
+    tag = filename.split('_')[0]
+    if re.search('[a-zA-Z]*', tag).group() == '':
+        tag = 'scan'
+    filename_prefix = f"{dt.now().strftime('%Y%m%d')}_{tag}_" # "Your output filename here-p."
+    # ** Start numbering the filenames here (e.g., the first page number) **
+    filename_numbering_start=i #15
+    # ** Number of digits for zero-padding the filename number (e.g., 42 => '042') **
+    filename_number_padding=3
+    # ** Output image format **
+    image_format = 'png'
 
-        print(f"Converting {pdf_path} to images...")
-        # ** Change DPI as needed to maintain clarity/legibility of text or other
-        # details; poppler_path can be excluded if you installed poppler from
-        # conda-forge OR have poppler in your PATH variables **
-        images_out = convert_from_path(pdf_path,
-                                       dpi=300,
-                                       output_folder=dest_dir,
-                                       fmt=image_format)#,
-                                       #poppler_path = r'C:\path\to\poppler-xx\bin')
+    print(f"Converting {pdf_path} to images...")
+    # ** Change DPI as needed to maintain clarity/legibility of text or other
+    # details; poppler_path can be excluded if you installed poppler from
+    # conda-forge OR have poppler in your PATH variables **
+    images_out = convert_from_path(pdf_path,
+                                   dpi=300,
+                                   output_folder=dest_dir,
+                                   fmt=image_format)#,
+                                   #poppler_path = r'C:\path\to\poppler-xx\bin')
 
-        print("Conversion complete. Renaming image files...")
-        # Rename images
-        for i, curr_img in enumerate(images_out, start = filename_numbering_start):
-            # Close current image I/O stream
-            curr_img.close()
-            # Generate the new filename
-            new_name = f"{filename_prefix}{str(i).zfill(filename_number_padding)}.{image_format}"
-            # ...And rename the file
-            replace(curr_img.filename, path.join(dest_dir, new_name))
+    print("Conversion complete. Renaming image files...")
+    # Rename images
+    for i, curr_img in enumerate(images_out, start = filename_numbering_start):
+        # Close current image I/O stream
+        curr_img.close()
+        # Generate the new filename
+        new_name = f"{filename_prefix}{str(i).zfill(filename_number_padding)}.{image_format}"
+        # ...And rename the file
+        replace(curr_img.filename, path.join(dest_dir, new_name))
