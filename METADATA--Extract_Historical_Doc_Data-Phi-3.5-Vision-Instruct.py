@@ -40,7 +40,7 @@ model_id = "rfpaul/Phi-3.5-vision-instruct"
 # Note: set _attn_implementation='eager' if you don't have flash_attn installed
 model = AutoModelForCausalLM.from_pretrained(
   model_id,
-  device_map= "cuda", #"cpu", #"cuda",
+  device_map= "cpu", #"cuda",
   trust_remote_code=True,
   torch_dtype="auto",
   _attn_implementation= "eager", # 'flash_attention_2', #
@@ -84,7 +84,7 @@ def Promptify_Proto_Image_Paths(path_list):
             proto_response = f.read()
 
         # get the initial prompt as string
-        with open('prompts/tabular.txt', 'r') as f:
+        with open('prompts/metadata.txt', 'r') as f:
             init_prompt = f.read()
 
         if i == 1:
@@ -154,7 +154,7 @@ for img_path in extract_img_paths:
         # Put the infer image at the end of the image list
         image_list[-1] = infer_img
 
-        inputs = processor(prompt, image_list, return_tensors="pt").to("cuda:0")
+        inputs = processor(prompt, image_list, return_tensors="pt").to("cpu") #"cuda:0")
 
         generation_args = {
             "max_new_tokens": 512,
