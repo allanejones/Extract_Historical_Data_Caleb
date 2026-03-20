@@ -107,9 +107,11 @@ def Promptify_Proto_Image_Paths(path_list):
     return messages
 
 # ** Prototype images to guide response **
-basepath = r"F:\EastStLouis\Digitizing_Dark_Data\Test Extractions" #r"C:\Users\alljones\Desktop\dump\test2\Test Extractions"
+template_type = "Test Extractions"
+basepath = r"F:\EastStLouis\Digitizing_Dark_Data\{}".format(template_type)
+# Extractions"
 proto_img_dir = path.join(basepath, r'Proto_Tabular\Prototype_Images')
-proto_img_paths = [path.join(proto_img_dir, png) for png in listdir(proto_img_dir)]
+proto_img_paths = [path.join(proto_img_dir, png) for png in listdir(proto_img_dir) if "png" in png]
 
 # Create inference prompt from prototype images & their associated prototype extractions
 messages = Promptify_Proto_Image_Paths(proto_img_paths)
