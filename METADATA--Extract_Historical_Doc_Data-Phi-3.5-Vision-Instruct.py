@@ -35,6 +35,10 @@ import requests
 from transformers import AutoModelForCausalLM
 from transformers import AutoProcessor
 
+# AEJ imports
+import time
+start = time.time()
+
 model_id = "rfpaul/Phi-3.5-vision-instruct"
 
 # Note: set _attn_implementation='eager' if you don't have flash_attn installed
@@ -72,6 +76,10 @@ def Basename_Only(filepath):
 def Promptify_Proto_Image_Paths(path_list):
     messages = []
 
+    # get the initial prompt as string
+    with open('prompts/metadata.txt', 'r') as f:
+        init_prompt = f.read()
+
     for i, p in enumerate(path_list, start=1):
         # Drop the file extension and split apart the path
         full_path_split = path.splitext(p)[0].split(path.sep)
@@ -83,10 +91,6 @@ def Promptify_Proto_Image_Paths(path_list):
         with open(proto_response_path, 'r') as f:
             proto_response = f.read()
 
-        # get the initial prompt as string
-        with open('prompts/metadata.txt', 'r') as f:
-            init_prompt = f.read()
-
         if i == 1:
             messages.extend(
                 [  # ** Initial prompt to prime the model **
@@ -96,13 +100,13 @@ def Promptify_Proto_Image_Paths(path_list):
         else:
             messages.extend(
                 [ # ** Subsequent priming prompt(s) **
-                    {"role": "user", "content": f"<|image_{i}|>\nExtract all the textual and numeric data from this image in JSON format."},
+                    {"role": "user", "content": f"<|image_{i}|>\nExtract all the textual and numeric data from this image in {file_ext.upper()} format."},
                     {"role": "assistant", "content": proto_response}
                 ])
 
         # ** If we're on the last path, append the final prompt for the infer/extract image **
         if i == len(path_list):
-            messages.append({"role": "user", "content": f"<|image_{i+1}|>\nExtract all the textual and numeric data from this image in JSON format."})
+            messages.append({"role": "user", "content": f"<|image_{i+1}|>\nExtract all the textual and numeric data from this image in {file_ext.upper()} format."})
 
     return messages
 
@@ -173,3 +177,6 @@ for img_path in extract_img_paths:
         with open(dest_dir.format(filename), 'w') as f:
             f.write(response)
             print(f"Wrote data extraction inference to {filename}.{file_ext}")
+
+
+print(f'\n\n*** Process complete in {(time.time()-start)/3600} hours.')

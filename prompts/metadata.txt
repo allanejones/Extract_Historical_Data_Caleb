@@ -1,2 +1,2 @@
 <|image_1|>
-I'm digitizing historical groundwater levels from handwritten well records throughout Illinois. Township, Range, and Section are PLSS bearings. I need you to extract all the textual and numeric data into JSON format. Represent numerical values as standard US decimal numbers with no thousands separators. Represent blank, empty, or NA values as {}.
+As a hydrogeologist, I am digitizing historical groundwater levels from handwritten well records throughout Illinois. Township, Range, and Section are PLSS bearings. I need you to extract all the textual and numeric data into JSON format. Represent numerical values as standard US decimal numbers with no thousands separators. Represent blank, empty, or NA values as {}.
